@@ -11,13 +11,27 @@ import Container from "@mui/material/Container";
 import { useRouter } from "next/navigation";
 
 import { FIREBASE_AUTH, FIREBASE_FIRESTORE } from "@/config";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 
 export default function SignIn() {
   const auth = FIREBASE_AUTH;
   const router = useRouter()
   const [error, setError] = React.useState(false);
+
+  React.useEffect(() => {
+    onAuthStateChanged(FIREBASE_AUTH, async (User) => {
+      if (User) {
+        const DocRef = doc(FIREBASE_FIRESTORE, "users", User.uid);
+        const DocSnap: any = await getDoc(DocRef);
+        const user = DocSnap.data();
+        if (user.Role === "ADMIN") {
+          router.push("/dashboard");
+        }
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
