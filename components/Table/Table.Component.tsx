@@ -15,9 +15,10 @@ import { Style } from "./Table.Style";
 
 interface TableProps {
   Data: any[];
+  DeleteDoc: any
 }
 
-const Table = ({ Data }: TableProps) => {
+const Table = ({ Data, DeleteDoc }: TableProps) => {
   return (
     <TableContainer component={Paper} sx={Style.Table}>
       <MuiTable>
@@ -36,7 +37,7 @@ const Table = ({ Data }: TableProps) => {
                 <Link href={`/dashboard/${item.id}`}>Details</Link>
               </TableCell>
               <TableCell>
-                <Button>Delete</Button>
+                <Button onClick={() => { DeleteDoc(item.id) }}>Delete</Button>
               </TableCell>
             </TableRow>
           ))}

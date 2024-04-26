@@ -26,8 +26,6 @@ export default function SignIn() {
     const Email: any = data.get("email");
     const Password: any = data.get("password");
 
-    console.log(Email, Password);
-
     try {
       const res = await signInWithEmailAndPassword(auth, Email, Password);
       if (res.user.uid) {

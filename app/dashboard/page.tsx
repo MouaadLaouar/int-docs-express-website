@@ -2,19 +2,35 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, deleteDoc } from "firebase/firestore";
 import { FIREBASE_AUTH, FIREBASE_FIRESTORE } from "@/config";
 import { useRouter } from "next/navigation";
 
 import { Style } from "./dashboard.Style";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import NavBar from "@/components/NavBar";
 import Table from "@/components/Table";
+import AddOrg from "@/components/Modal/Org/AddOrg.Component";
 
 const Dashboard = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>({});
   const [IntOrgs, setIntOrgs] = useState<any[]>([]);
+  const [open, setOpen] = useState(false);
+
+  const getData = async () => {
+    const data: any[] = [];
+    const querySnapshot = await getDocs(
+      collection(FIREBASE_FIRESTORE, "intorgs")
+    );
+    querySnapshot.forEach((doc) => {
+      data.push({
+        id: doc.id,
+        Name: doc.data().Name,
+      });
+    });
+    setIntOrgs(data);
+  };
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, async (User) => {
@@ -32,32 +48,44 @@ const Dashboard = () => {
       }
     });
 
-    const getData = async () => {
-      const data: any[] = [];
-      const querySnapshot = await getDocs(
-        collection(FIREBASE_FIRESTORE, "intorgs")
-      );
-      querySnapshot.forEach((doc) => {
-        data.push({
-          id: doc.id,
-          Name: doc.data().Name,
-        });
-      });
-      console.log(data)
-      setIntOrgs(data);
-    };
     getData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const CloseDrawer = (close: boolean) => {
+    setOpen(close);
+    getData();
+  };
+
+  const DeleteDoc = async (ID: string) => {
+    try {
+      await deleteDoc(doc(FIREBASE_FIRESTORE, "intorgs", ID)).then(() => {
+        getData();
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <Box>
       <NavBar Name={user.Name} />
       <Box sx={Style.Box}>
-        <Typography variant="h4">See All the Organisation :</Typography>
-        { IntOrgs.length > 0 && <Table Data={IntOrgs} />}
+        <Box sx={Style.AppBar}>
+          <Typography variant="h4">See All the Organisation :</Typography>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            Add Org
+          </Button>
+        </Box>
+        {IntOrgs.length > 0 && <Table Data={IntOrgs} DeleteDoc={DeleteDoc} />}
       </Box>
+      <AddOrg open={open} setonClose={CloseDrawer} />
     </Box>
   );
 };

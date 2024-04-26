@@ -1,7 +1,6 @@
 import SignIn from "@/components/SignIn";
 import { Box } from "@mui/material";
 import { StyleKey } from "@/types";
-import useAuth from "@/hooks/useAuth";
 
 export default function Home() {
   return (

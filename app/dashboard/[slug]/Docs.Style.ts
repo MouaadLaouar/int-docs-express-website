@@ -1,8 +1,12 @@
 import { StyleKey } from "@/types";
 
 export const Style: StyleKey = {
-    Box: {
-        p: 2
+    Docs: {},
+    Table: {
+        marginTop: 2,
+    },
+    TableHead: {
+        fontSize: 400,
     },
     AppBar: {
         p: 2,
