@@ -11,12 +11,15 @@ import { Box, Button, Typography } from "@mui/material";
 import NavBar from "@/components/NavBar";
 import Table from "@/components/Table";
 import AddOrg from "@/components/Modal/Org/AddOrg.Component";
+import { OrgEdit, openModel } from "@/jotai/Atom";
+import { useAtom } from "jotai";
 
 const Dashboard = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>({});
   const [IntOrgs, setIntOrgs] = useState<any[]>([]);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useAtom(openModel);
+  const [orgEdit] = useAtom(OrgEdit);
 
   const getData = async () => {
     const data: any[] = [];
@@ -85,7 +88,7 @@ const Dashboard = () => {
         </Box>
         {IntOrgs.length > 0 && <Table Data={IntOrgs} DeleteDoc={DeleteDoc} />}
       </Box>
-      <AddOrg open={open} setonClose={CloseDrawer} />
+      <AddOrg open={open} setonClose={CloseDrawer} Data={orgEdit} />
     </Box>
   );
 };

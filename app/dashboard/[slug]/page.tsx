@@ -28,12 +28,15 @@ import {
 } from "@mui/material";
 
 import AddDoc from "@/components/Modal/Docs/AddDoc.Component";
+import { useAtom, useSetAtom } from "jotai";
+import { DocEdit } from "@/jotai/Atom";
 
 export default function Page({ params }: { params: { slug: string } }) {
   const IntOrg = params.slug;
   const [Documents, setDocuments] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const [docEdit, setDocEdit] = useAtom(DocEdit)
 
   const getData = async () => {
     try {
@@ -49,7 +52,7 @@ export default function Page({ params }: { params: { slug: string } }) {
       querySnapshot.forEach((doc) => {
         data.push({ id: doc.id, ...doc.data() });
       });
-      
+
       // Set the retrieved documents to the state
       setDocuments(data);
     } catch (error) {
@@ -122,6 +125,22 @@ export default function Page({ params }: { params: { slug: string } }) {
                 <TableCell>
                   <Button
                     onClick={() => {
+                      // setOrgEdit(item); // need to change
+                      setDocEdit({
+                        code: item.code,
+                        name: item.name,
+                        url: item.url,
+                        id: item.id
+                      })
+                      setOpen(true);
+                    }}
+                  >
+                    Update
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    onClick={() => {
                       DeleteDoc(item.id);
                     }}
                   >
@@ -133,7 +152,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           </TableBody>
         </Table>
       </TableContainer>
-      <AddDoc ID={IntOrg} open={open} setonClose={CloseDrawer} />
+      <AddDoc ID={IntOrg} open={open} setonClose={CloseDrawer} Data={docEdit} />
     </Box>
   );
 }

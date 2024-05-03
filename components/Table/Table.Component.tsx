@@ -12,6 +12,8 @@ import {
 import Link from "next/link";
 
 import { Style } from "./Table.Style";
+import { useAtom, useSetAtom } from "jotai";
+import { OrgEdit, openModel } from "@/jotai/Atom";
 
 interface TableProps {
   Data: any[];
@@ -19,6 +21,8 @@ interface TableProps {
 }
 
 const Table = ({ Data, DeleteDoc }: TableProps) => {
+  const setOrgEdit = useSetAtom(OrgEdit)
+  const setopen = useSetAtom(openModel)
   return (
     <TableContainer component={Paper} sx={Style.Table}>
       <MuiTable>
@@ -35,6 +39,11 @@ const Table = ({ Data, DeleteDoc }: TableProps) => {
               <TableCell>{item.Name}</TableCell>
               <TableCell>
                 <Link href={`/dashboard/${item.id}`}>Details</Link>
+              </TableCell>
+              <TableCell>
+                <Button onClick={() => { setOrgEdit(item), setopen(true) }}>
+                  Update
+                </Button>
               </TableCell>
               <TableCell>
                 <Button onClick={() => { DeleteDoc(item.id) }}>Delete</Button>
